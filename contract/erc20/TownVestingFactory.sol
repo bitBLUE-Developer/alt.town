@@ -11,14 +11,8 @@ contract TownVestingFactory is Ownable, ReentrancyGuard {
 
     using SafeERC20 for IERC20;
 
-    bool public isWethFirst;
-    address public usdTokenAddress;
-    address public companyWallet;
-
-    error NotContract();
-    error ZeroAddress();
     error ZeroAmount();
-    error EthTransferFailed();
+    error InvalidVestingSchedule();
 
     event VestingCreated(
         address indexed creator,
@@ -28,19 +22,18 @@ contract TownVestingFactory is Ownable, ReentrancyGuard {
         uint256 totalAmount
     );
 
-    modifier onlyContract(address account) {
-        if (account.code.length == 0) revert NotContract();
-        _;
-    }
-
     function createVesting(
         address token,
         uint256[] memory unlockTimestamps,
         uint256[] memory _unlockAmounts,
         bytes32 merkleRoot,
         uint256 totalAmount
-    ) external payable nonReentrant {
+    ) external nonReentrant {
         if (totalAmount == 0) revert ZeroAmount();
+
+        if (unlockTimestamps.length != _unlockAmounts.length) {
+            revert InvalidVestingSchedule();
+        }
 
         TownVesting vesting = new TownVesting(token, unlockTimestamps, _unlockAmounts,  merkleRoot, msg.sender);
 

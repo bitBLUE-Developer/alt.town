@@ -96,15 +96,16 @@ contract TownReward {
 
         if (getRevoked(index)) revert AlreadyRevoked();
 
+        uint256 alreadyClaimed = claimed[index];
         uint256 claimable = getClaimable(index, amount);
 
         setRevoked(index);
 
-        uint256 rest = amount - claimable;
-
-        IERC20(token).safeTransfer(owner, rest);
-
-        emit RewardRevoked(account, rest);
+        uint256 rest = amount - alreadyClaimed - claimable;
+        if(rest != 0) {
+            IERC20(token).safeTransfer(owner, rest);
+            emit RewardRevoked(account, rest);
+        }
     }
 
     function getClaimable(

@@ -114,6 +114,7 @@ contract TownVesting {
 
         if (getRevoked(index)) revert AlreadyRevoked();
 
+        uint256 alreadyClaimed = claimed[index];
         uint256 claimable = getClaimable(index, amount, start);
 
         setRevoked(index);
@@ -123,11 +124,12 @@ contract TownVesting {
             emit Claim(account, claimable);
         }
 
-        uint256 rest = amount - claimable;
+        uint256 rest = amount - alreadyClaimed - claimable;
 
-        IERC20(token).safeTransfer(owner, rest);
-
-        emit VestingRevoked(account, rest);
+        if(rest != 0) {
+            IERC20(token).safeTransfer(owner, rest);
+            emit VestingRevoked(account, rest);
+        }
     }
 
     function getClaimable(

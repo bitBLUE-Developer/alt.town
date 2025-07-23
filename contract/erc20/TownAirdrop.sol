@@ -64,7 +64,7 @@ contract TownAirdrop is EIP712, Ownable{
     function airdrop(uint256 _round, uint256 _amount, uint256 _timestamp, bytes calldata signature) external {
         require(!airdropList[msg.sender].airdropped, "Already claimed");
         require(maxRound >= _round, "Invalid round");
-        require(block.timestamp < roundList[_round].end, "Round is over");
+        require(block.timestamp <= roundList[_round].end, "Round is over");
         require(block.timestamp >= roundList[_round].start, "Round is not started");
         require(roundList[_round].airdroppedAmount + _amount <= roundList[_round].amount, "Round is full");
 
