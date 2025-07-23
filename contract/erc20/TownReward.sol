@@ -22,7 +22,6 @@ contract TownReward {
 
     error InvalidProof();
     error NothingToClaim();
-    error InvalidDates();
     error EmptyMerkleRoot();
     error OnlyOwner();
     error AlreadyRevoked();
@@ -118,6 +117,7 @@ contract TownReward {
 
     function transferOwnership(address newOwner) public virtual onlyOwner {
         if (newOwner == address(0)) revert ZeroAddress();
+        emit OwnershipTransferred(owner, newOwner);
         owner = newOwner;
     }
 
