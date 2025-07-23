@@ -101,7 +101,7 @@ contract TownReward {
 
         setRevoked(index);
 
-        uint256 rest = amount - alreadyClaimed - claimable;
+        uint256 rest = amount - (alreadyClaimed + claimable);
         if(rest != 0) {
             IERC20(token).safeTransfer(owner, rest);
             emit RewardRevoked(account, rest);

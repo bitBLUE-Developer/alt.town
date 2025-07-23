@@ -116,15 +116,15 @@ contract TownVesting {
 
         uint256 alreadyClaimed = claimed[index];
         uint256 claimable = getClaimable(index, amount, start);
+        uint256 rest = amount - (alreadyClaimed + claimable);
 
         setRevoked(index);
 
         if (claimable != 0) {
+            claimed[index] += claimable;
             IERC20(token).safeTransfer(account, claimable);
             emit Claim(account, claimable);
         }
-
-        uint256 rest = amount - alreadyClaimed - claimable;
 
         if(rest != 0) {
             IERC20(token).safeTransfer(owner, rest);
